@@ -50,13 +50,15 @@ namespace gr {
       d_min_blank(min_blank_samples),
       d_max_blank(max_blank_samples),
       d_blank_streak(0),
-      d_currently_normal(true),
+      d_currently_normal(false),
       calc_normal_streak(d_min_normal, d_max_normal),
-      calc_blank_streak(d_min_blank, d_max_blank)
+      calc_blank_streak(d_min_blank, d_max_blank),
+      d_total_samples(0)
     {
 
       d_normal_streak = calc_normal_streak(d_rng);
       d_blank_streak = calc_blank_streak(d_rng);
+
     }
 
     /*
@@ -83,31 +85,39 @@ namespace gr {
       float *out = (float *) output_items[0];
 
       int current_input_index = 0;
+      //printf("Output items requested: %d.", noutput_items);
       // first we run through all provided data
       for(int i = 0; i < noutput_items; i++) {
 	      bool advanced_sample = false;
         do {
           if(d_currently_normal == true) {
             if(d_normal_streak == 0) {
+              //printf("Normal Streak 0, ");
               d_currently_normal = false;
               d_normal_streak = (int)calc_normal_streak(d_rng);
             } else {
               out[i] = in[current_input_index++];
               samples_consumed++;
+              //printf("Normal Streak %d, ", d_normal_streak);
               advanced_sample = true;
+              d_total_samples++;
               d_normal_streak--;
             }
           } else {
             if(d_blank_streak == 0) {
+              //printf("Blank Streak 0, ");
               d_currently_normal = true;
               d_blank_streak = (int)calc_blank_streak(d_rng);
             } else {
               out[i] = 0;
+              //printf("Blank Streak %d, ", d_blank_streak);
               advanced_sample = true;
+              d_total_samples++;
               d_blank_streak--;
             }
           }
         } while (advanced_sample == false);
+        //printf("Total samples produced: %d\n", d_total_samples);
       }
       // Tell runtime system how many input items we consumed on
       // each input stream.
@@ -115,7 +125,7 @@ namespace gr {
       produce (0, noutput_items);
 
       // Tell runtime system how many output items we produced.
-      return noutput_items;
+      return -2;
     }
     void
     blanker_ff_impl::set_min_blank_samples(int min_blank_samples)

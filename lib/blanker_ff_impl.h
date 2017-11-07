@@ -38,6 +38,7 @@ namespace gr {
       bool d_currently_normal;
       int d_normal_streak;
       int d_blank_streak;
+      int d_total_samples;
       boost::random::mt19937 d_rng;
       boost::random::uniform_int_distribution<> calc_normal_streak;
       boost::random::uniform_int_distribution<> calc_blank_streak;
