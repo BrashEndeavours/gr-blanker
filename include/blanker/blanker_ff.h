@@ -48,9 +48,9 @@ namespace gr {
        */
       static sptr make(int min_normal_samples, int max_normal_samples, int min_blank_samples, int max_blank_samples);
       
-            virtual void set_min_blank_samples(int min_blank_samples) = 0;
-            virtual void set_max_blank_samples(int max_blank_samples) = 0;
-          };
+      virtual void set_min_blank_samples(int min_blank_samples) = 0;
+      virtual void set_max_blank_samples(int max_blank_samples) = 0;
+    };
 
   } // namespace blanker
 } // namespace gr
